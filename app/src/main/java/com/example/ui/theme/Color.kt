@@ -19,5 +19,11 @@ val DarkSurface = Color(0xFF101522)
 val DarkSurfaceVariant = Color(0xFF192134)
 val DarkSurfaceBorder = Color(0xFF26334D)
 
+val DarkNavyBg = Color(0xFF070B19)
+val DarkNavySurface = Color(0xFF10162A)
+
+val MidnightPurpleBg = Color(0xFF14081C)
+val MidnightPurpleSurface = Color(0xFF1F102B)
+
 val TextPrimary = Color(0xFFF4F7FC)
 val TextSecondary = Color(0xFFA5B2CA)

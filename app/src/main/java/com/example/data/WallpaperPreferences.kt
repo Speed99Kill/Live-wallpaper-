@@ -65,8 +65,17 @@ class WallpaperPreferences(context: Context) {
         prefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
+    fun getAppTheme(): String {
+        return prefs.getString(KEY_APP_THEME, "Obsidian") ?: "Obsidian"
+    }
+
+    fun setAppTheme(theme: String) {
+        prefs.edit().putString(KEY_APP_THEME, theme).apply()
+    }
+
     companion object {
         private const val PREFS_NAME = "motion_paper_active_prefs"
+        private const val KEY_APP_THEME = "app_theme"
         private const val KEY_ID = "active_id"
         private const val KEY_NAME = "active_name"
         private const val KEY_ENGINE = "active_engine"

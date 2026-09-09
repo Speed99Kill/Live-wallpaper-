@@ -33,13 +33,26 @@ private val MotionPaperDarkColorScheme = darkColorScheme(
     outline = DarkSurfaceBorder
 )
 
+private val NavyColorScheme = MotionPaperDarkColorScheme.copy(
+    background = DarkNavyBg,
+    surface = DarkNavySurface
+)
+
+private val PurpleColorScheme = MotionPaperDarkColorScheme.copy(
+    background = MidnightPurpleBg,
+    surface = MidnightPurpleSurface
+)
+
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = true, // Premium dark theme by default for live wallpapers
-    dynamicColor: Boolean = false, // Keep consistent cyber/cosmic palette
+    appTheme: String = "Obsidian",
     content: @Composable () -> Unit
 ) {
-    val colorScheme = MotionPaperDarkColorScheme
+    val colorScheme = when (appTheme) {
+        "Navy" -> NavyColorScheme
+        "Purple" -> PurpleColorScheme
+        else -> MotionPaperDarkColorScheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,

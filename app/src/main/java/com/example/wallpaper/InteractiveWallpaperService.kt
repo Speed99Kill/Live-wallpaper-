@@ -42,6 +42,10 @@ class InteractiveWallpaperService : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder) {
             super.onCreate(surfaceHolder)
+            
+            // Force standard 32-bit color format to avoid "101010-2 format" EGL warnings on low-end/emulators
+            surfaceHolder.setFormat(android.graphics.PixelFormat.RGBA_8888)
+            
             preferences = WallpaperPreferences(this@InteractiveWallpaperService)
             motionTracker = MotionSensorTracker(this@InteractiveWallpaperService)
             currentConfig = preferences.getActiveWallpaper()
@@ -130,8 +134,15 @@ class InteractiveWallpaperService : WallpaperService() {
             val config = currentConfig ?: preferences.getActiveWallpaper()
             val motion = motionTracker.motionFlow.value
 
-            var canvas = holder.lockHardwareCanvas()
+            var canvas: android.graphics.Canvas? = null
             try {
+                // Try hardware canvas first, but fallback to software if the driver fails
+                canvas = try {
+                    holder.lockHardwareCanvas()
+                } catch (e: Exception) {
+                    holder.lockCanvas()
+                }
+                
                 if (canvas != null) {
                     renderer.render(
                         canvas = canvas,
@@ -144,9 +155,15 @@ class InteractiveWallpaperService : WallpaperService() {
                         config = config
                     )
                 }
+            } catch (e: Exception) {
+                // Ignore rendering exceptions during layout transitions
             } finally {
                 if (canvas != null) {
-                    holder.unlockCanvasAndPost(canvas)
+                    try {
+                        holder.unlockCanvasAndPost(canvas)
+                    } catch (e: Exception) {
+                        // Ignore unlock errors
+                    }
                 }
             }
         }

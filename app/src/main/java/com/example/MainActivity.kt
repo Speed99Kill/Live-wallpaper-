@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -48,13 +49,15 @@ import com.example.ui.WallpaperViewModel
 import com.example.ui.screens.CustomizerScreen
 import com.example.ui.screens.DiscoverScreen
 import com.example.ui.screens.MyCollectionScreen
+import com.example.ui.screens.SettingsScreen
 import com.example.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.flow.collectLatest
 
 enum class AppDestination(val label: String) {
     DISCOVER("Discover"),
     STUDIO("Live Studio"),
-    COLLECTION("Collection")
+    COLLECTION("Collection"),
+    SETTINGS("Settings")
 }
 
 class MainActivity : ComponentActivity() {
@@ -66,7 +69,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MyApplicationTheme {
+            val appTheme by wallpaperViewModel.appTheme.collectAsState(initial = "Obsidian")
+            MyApplicationTheme(appTheme = appTheme) {
                 MainAppContent(viewModel = wallpaperViewModel)
             }
         }
@@ -166,7 +170,8 @@ fun MainAppContent(viewModel: WallpaperViewModel = viewModel()) {
                         onNavigateToStudio = { config ->
                             viewModel.selectWallpaper(config)
                             currentDestination = AppDestination.STUDIO
-                        }
+                        },
+                        onNavigateToSettings = { currentDestination = AppDestination.SETTINGS }
                     )
                 }
                 AppDestination.STUDIO -> {
@@ -183,6 +188,12 @@ fun MainAppContent(viewModel: WallpaperViewModel = viewModel()) {
                             currentDestination = AppDestination.STUDIO
                         },
                         onExploreCatalog = { currentDestination = AppDestination.DISCOVER }
+                    )
+                }
+                AppDestination.SETTINGS -> {
+                    SettingsScreen(
+                        viewModel = viewModel,
+                        onNavigateBack = { currentDestination = AppDestination.DISCOVER }
                     )
                 }
             }

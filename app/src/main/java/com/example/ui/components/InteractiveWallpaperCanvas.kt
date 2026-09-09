@@ -36,23 +36,33 @@ fun InteractiveWallpaperCanvas(
     isInteractive: Boolean = true
 ) {
     val renderer = remember(config.engineType) { WallpaperEngineRenderer() }
-    val motionData by motionTracker.motionFlow.collectAsStateWithLifecycle()
+    
+    // Only subscribe to real-time motion data if interactive, to prevent heavy recompositions on thumbnails
+    val activeMotionFlow = remember(isInteractive, motionTracker) {
+        if (isInteractive) motionTracker.motionFlow else kotlinx.coroutines.flow.flowOf(MotionData(0f, 0f, 0f))
+    }
+    val motionData by activeMotionFlow.collectAsStateWithLifecycle(initialValue = MotionData(0f, 0f, 0f))
 
     var totalTimeSec by remember { mutableFloatStateOf(0f) }
     var lastNanoTime by remember { mutableLongStateOf(0L) }
 
-    LaunchedEffect(Unit) {
-        lastNanoTime = System.nanoTime()
-        while (true) {
-            withFrameNanos { now ->
-                val dt = if (lastNanoTime > 0L) {
-                    ((now - lastNanoTime) / 1_000_000_000f).coerceIn(0.001f, 0.05f)
-                } else {
-                    0.016f
+    LaunchedEffect(isInteractive) {
+        if (isInteractive) {
+            lastNanoTime = System.nanoTime()
+            while (true) {
+                withFrameNanos { now ->
+                    val dt = if (lastNanoTime > 0L) {
+                        ((now - lastNanoTime) / 1_000_000_000f).coerceIn(0.001f, 0.05f)
+                    } else {
+                        0.016f
+                    }
+                    lastNanoTime = now
+                    totalTimeSec += dt
                 }
-                lastNanoTime = now
-                totalTimeSec += dt
             }
+        } else {
+            // Low-end device optimization: For static thumbnails, stop the infinite 60fps loop.
+            totalTimeSec = 2.5f
         }
     }
 

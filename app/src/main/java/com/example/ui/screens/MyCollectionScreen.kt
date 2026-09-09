@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
@@ -34,9 +35,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,8 +76,26 @@ fun MyCollectionScreen(
         else -> downloaded
     }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val columns = if (maxWidth > 600.dp) 3 else 2
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { 
+                    viewModel.createNewWallpaper()
+                    val config = viewModel.activeConfig.value
+                    onNavigateToStudio(config)
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(bottom = 80.dp) // Avoid overlapping with bottom bar
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Create Custom")
+            }
+        }
+    ) { paddingValues ->
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            val columns = if (maxWidth > 600.dp) 3 else 2
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
@@ -255,4 +276,5 @@ fun MyCollectionScreen(
             }
         }
     }
+}
 }

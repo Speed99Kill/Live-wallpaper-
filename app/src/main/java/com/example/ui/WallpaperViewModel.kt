@@ -44,6 +44,9 @@ class WallpaperViewModel(application: Application) : AndroidViewModel(applicatio
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _appTheme = MutableStateFlow(preferences.getAppTheme())
+    val appTheme: StateFlow<String> = _appTheme.asStateFlow()
+
     private val _notifications = MutableSharedFlow<UiNotification>()
     val notifications: SharedFlow<UiNotification> = _notifications.asSharedFlow()
 
@@ -98,6 +101,27 @@ class WallpaperViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+    }
+
+    fun setAppTheme(theme: String) {
+        preferences.setAppTheme(theme)
+        _appTheme.value = theme
+    }
+
+    fun createNewWallpaper() {
+        val newConfig = WallpaperConfig(
+            id = "custom_${System.currentTimeMillis()}",
+            name = "My Custom Wallpaper",
+            engineType = WallpaperEngineType.COSMIC_GRAVITY,
+            animationSpeed = 1.0f,
+            sensorSensitivity = 1.0f,
+            invertMotion = false,
+            particleDensity = 1.0f,
+            paletteId = "cosmic_violet",
+            touchInteraction = TouchInteraction.RIPPLE,
+            isCustom = true
+        )
+        selectWallpaper(newConfig)
     }
 
     fun updateAnimationSpeed(speed: Float) {
