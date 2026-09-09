@@ -1,0 +1,6 @@
+{
+  "name": "MotionPaper",
+  "description": "Interactive live wallpaper app with motion sensor responsiveness, customizable animation speeds, and home/lock screen application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

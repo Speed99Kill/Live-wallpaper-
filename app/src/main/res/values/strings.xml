@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MotionPaper</string>
+    <string name="wallpaper_service_name">MotionPaper Live Wallpaper</string>
+    <string name="wallpaper_service_description">Interactive motion-responsive live wallpaper with customizable animation speeds and touch dynamics.</string>
+</resources>
